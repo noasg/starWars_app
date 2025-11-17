@@ -1,4 +1,3 @@
-import React from "react";
 import PersonCardSkeleton from "../PersonCardSkeleton/PersonCardSkeleton";
 import "./LoaderSection.scss";
 
