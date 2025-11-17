@@ -6,21 +6,27 @@ import PersonCardSkeleton from "../molecules/PersonCardSkeleton/PersonCardSkelet
 import type { Person } from "../types/Person";
 import "./PeoplePage.scss";
 
+import { useSelector, useDispatch } from "react-redux";
+import { setImages } from "../services/imageCacheSlice";
+import type { RootState } from "../services/store"; // adjust path
+
 export default function PeoplePage() {
   const [page, setPage] = useState(1);
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [imageMap, setImageMap] = useState<Record<string, string>>({});
   const [isFetchingNext, setIsFetchingNext] = useState(false);
 
   const { data, isLoading, isError, isFetching } = useGetPeopleQuery(page);
 
-  // Cache images per person
-  // populate imageMap when data loads
+  const imageMap = useSelector((state: RootState) => state.imageCache);
+  const dispatch = useDispatch();
+
+  // Cache images in Redux
   useEffect(() => {
     if (!data) return;
 
     const newImages: Record<string, string> = {};
+
     data.results.forEach((person) => {
       if (!imageMap[person.name]) {
         newImages[person.name] =
@@ -29,12 +35,10 @@ export default function PeoplePage() {
     });
 
     if (Object.keys(newImages).length > 0) {
-      const timer = setTimeout(() => {
-        setImageMap((prev) => ({ ...prev, ...newImages }));
-      }, 0);
-      return () => clearTimeout(timer);
+      console.log("Caching images:", newImages);
+      dispatch(setImages(newImages));
     }
-  }, [data]);
+  }, [data, imageMap, dispatch]);
 
   // Reset fetching-next flag when new data arrives
   useEffect(() => {
@@ -60,7 +64,6 @@ export default function PeoplePage() {
 
   if (isError) return <div>Error loading people.</div>;
 
-  // Show skeleton either on first load or while fetching next/prev
   if (isLoading || isFetchingNext) {
     return (
       <div className="people-page">
