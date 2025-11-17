@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 import { useGetPeopleQuery } from "../services/peopleApi";
 import PeopleList from "../organisms/PeopleList/PeopleList";
 import CharacterDetailsModal from "../organisms/CharacterDetailsModal/CharacterDetailsModal";
-import PersonCardSkeleton from "../molecules/PersonCardSkeleton/PersonCardSkeleton";
 import type { Person } from "../types/Person";
 import "./PeoplePage.scss";
-
 import { useSelector, useDispatch } from "react-redux";
 import { setImages } from "../services/imageCacheSlice";
 import type { RootState } from "../services/store"; // adjust path
+import Pagination from "../molecules/Pagination/Pagination";
+import LoaderSection from "../molecules/LoaderSection/LoaderSection";
 
 export default function PeoplePage() {
   const [page, setPage] = useState(1);
@@ -24,9 +24,7 @@ export default function PeoplePage() {
   // Cache images in Redux
   useEffect(() => {
     if (!data) return;
-
     const newImages: Record<string, string> = {};
-
     data.results.forEach((person) => {
       if (!imageMap[person.name]) {
         newImages[person.name] =
@@ -68,11 +66,7 @@ export default function PeoplePage() {
     return (
       <div className="people-page">
         <h1 className="people-page__title">Star Wars Characters</h1>
-        <div className="people-list">
-          {Array.from({ length: 10 }).map((_, i) => (
-            <PersonCardSkeleton key={i} />
-          ))}
-        </div>
+        <LoaderSection count={10} />
       </div>
     );
   }
@@ -100,17 +94,13 @@ export default function PeoplePage() {
         />
       )}
 
-      <div className="people-page__pagination">
-        <button
-          disabled={!data?.previous || isFetchingNext}
-          onClick={handlePrev}
-        >
-          Prev
-        </button>
-        <button disabled={!data?.next || isFetchingNext} onClick={handleNext}>
-          Next
-        </button>
-      </div>
+      <Pagination
+        onNext={handleNext}
+        onPrev={handlePrev}
+        isFetchingNext={isFetchingNext}
+        hasNext={!!data?.next}
+        hasPrev={!!data?.previous}
+      />
     </div>
   );
 }
