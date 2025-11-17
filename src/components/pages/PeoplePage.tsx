@@ -15,6 +15,7 @@ export default function PeoplePage() {
 
   const { data, isLoading, isError, isFetching } = useGetPeopleQuery(page);
 
+  // Cache images per person
   useEffect(() => {
     if (!data) return;
 
@@ -31,12 +32,11 @@ export default function PeoplePage() {
       const timer = setTimeout(() => {
         setImageMap((prev) => ({ ...prev, ...newImages }));
       }, 0);
-
       return () => clearTimeout(timer);
     }
-  }, [data]); // remove imageMap from deps
+  }, [data]);
 
-  // Reset fetching flag when query finishes
+  // Reset fetching-next flag when new data arrives
   useEffect(() => {
     if (!isFetching && isFetchingNext) {
       const timer = setTimeout(() => {
@@ -60,7 +60,8 @@ export default function PeoplePage() {
 
   if (isError) return <div>Error loading people.</div>;
 
-  if (isLoading) {
+  // Show skeleton either on first load or while fetching next/prev
+  if (isLoading || isFetchingNext) {
     return (
       <div className="people-page">
         <h1 className="people-page__title">Star Wars Characters</h1>
@@ -79,11 +80,12 @@ export default function PeoplePage() {
 
       <PeopleList
         people={data?.results ?? []}
-        onCardClick={(person) => {
-          const img = imageMap[person.name]!; // use cached URL
+        onCardClick={(person, img) => {
+          console.log("Card clicked:", person.name);
           setSelectedPerson(person);
           setSelectedImage(img);
         }}
+        disabled={selectedPerson !== null}
       />
 
       {selectedPerson && selectedImage && (
@@ -98,15 +100,10 @@ export default function PeoplePage() {
         <button
           disabled={!data?.previous || isFetchingNext}
           onClick={handlePrev}
-          className="pagination-btn"
         >
           Prev
         </button>
-        <button
-          disabled={!data?.next || isFetchingNext}
-          onClick={handleNext}
-          className="pagination-btn"
-        >
+        <button disabled={!data?.next || isFetchingNext} onClick={handleNext}>
           Next
         </button>
       </div>

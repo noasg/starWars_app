@@ -8,13 +8,17 @@
   transition:
     transform 0.2s,
     box-shadow 0.2s;
-  outline: none;
   color: #000000;
+  outline: none; // remove default outline
 
   &:hover,
-  &:focus {
+  &:focus-visible {
     transform: translateY(-4px);
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+  }
+
+  &:focus:not(:focus-visible) {
+    outline: none; // hide focus outline if not keyboard focus
   }
 
   &__image {
