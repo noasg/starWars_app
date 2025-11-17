@@ -1,0 +1,19 @@
+.character-modal {
+  text-align: center;
+
+  &__image {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+
+  h2 {
+    margin-bottom: 1rem;
+  }
+
+  p {
+    margin: 0.3rem 0;
+  }
+}

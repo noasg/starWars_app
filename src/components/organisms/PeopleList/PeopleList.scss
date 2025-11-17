@@ -1,0 +1,26 @@
+.people-list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.5rem;
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+.people-page__pagination button.pagination-btn {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  opacity: 1; // keep full opacity
+  pointer-events: auto; // allow hover effects if needed
+
+  &:disabled {
+    opacity: 1; // override the default disabled look
+    cursor: pointer; // keep cursor normal
+    pointer-events: none; // still prevents clicks while fetching
+  }
+}
