@@ -16,6 +16,7 @@ export default function PeoplePage() {
   const { data, isLoading, isError, isFetching } = useGetPeopleQuery(page);
 
   // Cache images per person
+  // populate imageMap when data loads
   useEffect(() => {
     if (!data) return;
 
@@ -23,12 +24,11 @@ export default function PeoplePage() {
     data.results.forEach((person) => {
       if (!imageMap[person.name]) {
         newImages[person.name] =
-          `https://picsum.photos/seed/${person.name}/300/300`;
+          `https://picsum.photos/seed/${person.name}/150/150`;
       }
     });
 
     if (Object.keys(newImages).length > 0) {
-      // defer state update to next tick
       const timer = setTimeout(() => {
         setImageMap((prev) => ({ ...prev, ...newImages }));
       }, 0);
@@ -80,6 +80,7 @@ export default function PeoplePage() {
 
       <PeopleList
         people={data?.results ?? []}
+        imageMap={imageMap}
         onCardClick={(person, img) => {
           console.log("Card clicked:", person.name);
           setSelectedPerson(person);

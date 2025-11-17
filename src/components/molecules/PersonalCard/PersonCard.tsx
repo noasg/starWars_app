@@ -4,17 +4,18 @@ import "./PersonCard.scss";
 
 interface PersonCardProps {
   person: Person;
+  imageUrl: string;
   onClick: (p: Person, img: string) => void;
   disabled?: boolean;
 }
 
 export default function PersonCard({
   person,
+  imageUrl,
   onClick,
   disabled,
 }: PersonCardProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const imageUrl = `https://picsum.photos/seed/${person.name}/150/150`;
 
   return (
     <div
@@ -35,7 +36,11 @@ export default function PersonCard({
       }}
       onMouseEnter={() => !disabled && ref.current?.focus()} // only focus if not disabled
     >
-      <img src={imageUrl} alt={person.name} className="person-card__image" />
+      <img
+        src={imageUrl ?? undefined}
+        alt={person.name}
+        className="person-card__image"
+      />
       <div className="person-card__name">{person.name}</div>
     </div>
   );
