@@ -9,10 +9,8 @@ function App() {
     <BrowserRouter>
       <Header />
       <Routes>
-        {/* Main page */}
         <Route path="/" element={<PeoplePage />} />
 
-        {/* Modal route */}
         <Route path="/people/:id" element={<PeoplePage />} />
 
         <Route
@@ -23,10 +21,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
-        {/* Placeholder for future protected routes */}
-        {/* <Route path="/favourites" element={<FavouritesPage />} /> */}
-        {/* <Route path="/login" element={<LoginPage />} /> */}
       </Routes>
     </BrowserRouter>
   );

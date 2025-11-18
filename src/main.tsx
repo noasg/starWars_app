@@ -8,7 +8,12 @@ import { store } from "./components/services/store.ts";
 async function prepare() {
   if (import.meta.env.DEV) {
     const { worker } = await import("./mocks/browser");
-    await worker.start();
+    await worker.start({
+      onUnhandledRequest: "bypass",
+      serviceWorker: {
+        url: "/mockServiceWorker.js",
+      },
+    });
   }
 }
 

@@ -4,6 +4,7 @@ import { useLoginMutation } from "../../services/authApi";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../../services/authSlice";
 import "./LoginForm.scss";
+import PaginationButton from "../../atoms/PaginationButton/PaginationButton";
 
 interface LoginFormProps {
   onSuccess?: () => void;
@@ -89,9 +90,13 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
 
       {error && <div className="error-banner">{error}</div>}
 
-      <button type="submit" disabled={isLoading}>
+      {/* <button type="submit" disabled={isLoading}>
         {isLoading ? "Logging in..." : "Login"}
-      </button>
+      </button> */}
+
+      <PaginationButton>
+        {isLoading ? "Logging in..." : "Login"}
+      </PaginationButton>
     </form>
   );
 }
