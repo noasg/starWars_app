@@ -1,44 +1,83 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Header.scss";
 import LoginForm from "../LoginForm/LoginForm";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../services/authSlice";
-import { peopleApi } from "../../services/peopleApi"; // or any other API slice you want to reset
+import { peopleApi } from "../../services/peopleApi";
 import { authApi } from "../../services/authApi";
 import type { RootState } from "../../services/store";
+import PaginationButton from "../../atoms/PaginationButton/PaginationButton";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 export default function Header() {
   const [showLogin, setShowLogin] = useState(false);
+  const [nextAfterLogin, setNextAfterLogin] = useState<string | null>(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
+  const userName = useSelector((state: RootState) => state.auth.user?.name);
+
+  // Open login modal automatically if location has next query
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const next = params.get("next");
+    if (next && !isAuthenticated) {
+      setNextAfterLogin(next);
+      setShowLogin(true);
+    }
+  }, [location.search, isAuthenticated]);
 
   const handleLoginSuccess = () => {
     setShowLogin(false);
+    const redirectPath = nextAfterLogin || "/";
+    setNextAfterLogin(null);
+    navigate(redirectPath, { replace: true });
   };
 
   const handleLogout = () => {
-    // Clear auth state
     dispatch(logout());
-
-    // Reset all RTK Query API cache
     dispatch(peopleApi.util.resetApiState());
     dispatch(authApi.util.resetApiState());
-
-    // Optionally close login modal if open
     setShowLogin(false);
+    navigate("/", { replace: true });
+  };
+
+  const goToFavorites = () => {
+    if (!isAuthenticated) {
+      navigate("/?next=/favourites"); // keep user on current page, modal opens automatically
+      return;
+    }
+    navigate("/favourites");
   };
 
   return (
     <header className="app-header">
-      <h1>Star Wars App</h1>
+      <h1 className="app-header__title">
+        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+          Star Wars App
+        </Link>
+      </h1>
 
-      {isAuthenticated ? (
-        <button onClick={handleLogout}>Logout</button>
-      ) : (
-        <button onClick={() => setShowLogin(true)}>Login</button>
+      {isAuthenticated && userName && (
+        <div className="app-header__center">
+          <span className="welcome-msg">Welcome back, {userName}!</span>
+          <PaginationButton onClick={goToFavorites}>Favorites</PaginationButton>
+        </div>
       )}
+
+      <div className="app-header__right">
+        {isAuthenticated ? (
+          <PaginationButton onClick={handleLogout}>Logout</PaginationButton>
+        ) : (
+          <PaginationButton onClick={() => setShowLogin(true)}>
+            Login
+          </PaginationButton>
+        )}
+      </div>
 
       {!isAuthenticated && showLogin && (
         <div className="login-modal">

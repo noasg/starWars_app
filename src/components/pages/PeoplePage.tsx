@@ -9,7 +9,7 @@ import { setImages } from "../services/imageCacheSlice";
 import type { RootState } from "../services/store";
 import Pagination from "../molecules/Pagination/Pagination";
 import LoaderSection from "../molecules/LoaderSection/LoaderSection";
-import { useParams, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 export default function PeoplePage() {
   const [page, setPage] = useState(1);
@@ -21,13 +21,9 @@ export default function PeoplePage() {
 
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Detect back/forward navigation
-  useEffect(() => {
-    console.log("URL changed, current modal person:", params.id ?? "none");
-  }, [params.id]);
-
-  // Cache images in Redux
+  // Cache images
   useEffect(() => {
     if (!data) return;
     const newImages: Record<string, string> = {};
@@ -52,21 +48,27 @@ export default function PeoplePage() {
     }
   }, [isFetching, isFetchingNext]);
 
-  // Determine modal directly from URL
-  const selectedPerson: Person | null = params.id
+  // Modal person determined by URL param
+  const modalPerson: Person | null = params.id
     ? (data?.results.find((p) => p.name === params.id) ?? null)
     : null;
 
-  const selectedImage: string | null = selectedPerson
-    ? `https://picsum.photos/seed/${selectedPerson.name}/150/150`
+  const modalImage: string | null = modalPerson
+    ? `https://picsum.photos/seed/${modalPerson.name}/150/150`
     : null;
 
   const handleCardClick = (person: Person) => {
-    navigate(`/people/${person.name}`);
+    // Push modal URL but keep current page as background
+    navigate(`/people/${person.name}`, { state: { background: location } });
   };
 
   const handleModalClose = () => {
-    navigate("/"); // closing modal just navigates back to main page
+    // Close modal → go back to background page if exists
+    if (location.state?.background) {
+      navigate(-1);
+    } else {
+      navigate("/"); // fallback
+    }
   };
 
   const handleNext = () => {
@@ -99,13 +101,13 @@ export default function PeoplePage() {
         people={data?.results ?? []}
         imageMap={imageMap}
         onCardClick={handleCardClick}
-        disabled={!!selectedPerson}
+        disabled={!!modalPerson}
       />
 
-      {selectedPerson && selectedImage && (
+      {modalPerson && modalImage && (
         <CharacterDetailsModal
-          person={selectedPerson}
-          image={selectedImage}
+          person={modalPerson}
+          image={modalImage}
           onClose={handleModalClose}
         />
       )}
