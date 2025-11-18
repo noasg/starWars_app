@@ -1,6 +1,6 @@
-// src/services/authSlice.ts
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { saveAuthState, clearAuthState, loadAuthState } from "./authStorage";
 
 export interface User {
   id: string;
@@ -15,7 +15,9 @@ interface AuthState {
   isAuthenticated: boolean;
 }
 
-const initialState: AuthState = {
+const stored = loadAuthState();
+
+const initialState: AuthState = stored ?? {
   accessToken: null,
   refreshToken: null,
   user: null,
@@ -38,12 +40,18 @@ export const authSlice = createSlice({
       state.refreshToken = action.payload.refreshToken;
       state.user = action.payload.user;
       state.isAuthenticated = true;
+
+      // persist to sessionStorage
+      saveAuthState(state);
     },
+
     logout: (state) => {
       state.accessToken = null;
       state.refreshToken = null;
       state.user = null;
       state.isAuthenticated = false;
+
+      clearAuthState();
     },
   },
 });

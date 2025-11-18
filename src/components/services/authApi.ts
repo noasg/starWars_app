@@ -1,6 +1,7 @@
 // src/services/authApi.ts
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import type { User } from "./authSlice";
+import { baseQueryWithReauth } from "./baseQueryWithReauth";
 
 interface LoginRequest {
   email: string;
@@ -19,7 +20,7 @@ interface RefreshResponse {
 
 export const authApi = createApi({
   reducerPath: "authApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "/" }),
+  baseQuery: baseQueryWithReauth,
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginRequest>({
       query: (body) => ({
@@ -28,12 +29,15 @@ export const authApi = createApi({
         body,
       }),
     }),
-    refresh: builder.mutation<RefreshResponse, void>({
-      query: () => ({
+
+    refresh: builder.mutation<RefreshResponse, { refreshToken: string }>({
+      query: (body) => ({
         url: "auth/refresh",
         method: "POST",
+        body,
       }),
     }),
+
     logout: builder.mutation<void, void>({
       query: () => ({
         url: "auth/logout",

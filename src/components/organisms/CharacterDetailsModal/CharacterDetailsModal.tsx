@@ -1,6 +1,10 @@
 import Backdrop from "../../atoms/Backdrop/Backdrop";
 import Modal from "../../molecules/Modal/Modal";
+import PaginationButton from "../../atoms/PaginationButton/PaginationButton";
+import { useSelector } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
 import type { Person } from "../../types/Person";
+import type { RootState } from "../../services/store";
 import "./CharacterDetailsModal.scss";
 
 export default function CharacterDetailsModal({
@@ -12,6 +16,24 @@ export default function CharacterDetailsModal({
   image: string;
   onClose: () => void;
 }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
+
+  const handleAddToFavorites = () => {
+    if (!isAuthenticated) {
+      // Redirect to login with next = current modal URL
+      navigate(`/login?next=${encodeURIComponent(location.pathname)}`);
+      return;
+    }
+
+    // Logged in → perform favourite action
+    console.log("Added to favourites:", person.name);
+    // TODO: dispatch your add-to-favourites action here
+  };
+
   return (
     <>
       <Backdrop onClick={onClose} />
@@ -48,7 +70,13 @@ export default function CharacterDetailsModal({
               <strong>Added to API:</strong>{" "}
               {new Date(person.created).toLocaleDateString("en-GB")}
             </p>
-            <br />
+
+            {/* Add to favourites button */}
+            <div style={{ marginTop: "1rem" }}>
+              <PaginationButton onClick={handleAddToFavorites}>
+                Add to favourites
+              </PaginationButton>
+            </div>
           </div>
         </div>
       </Modal>

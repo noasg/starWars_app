@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import "./Header.scss";
 import LoginForm from "../LoginForm/LoginForm";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../services/authSlice";
+import { loginSuccess, logout } from "../../services/authSlice";
 import { peopleApi } from "../../services/peopleApi";
 import { authApi } from "../../services/authApi";
-import type { RootState } from "../../services/store";
+import { store, type RootState } from "../../services/store";
 import PaginationButton from "../../atoms/PaginationButton/PaginationButton";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
@@ -25,9 +25,12 @@ export default function Header() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const next = params.get("next");
+
     if (next && !isAuthenticated) {
-      setNextAfterLogin(next);
-      setShowLogin(true);
+      Promise.resolve().then(() => {
+        setNextAfterLogin(next);
+        setShowLogin(true);
+      });
     }
   }, [location.search, isAuthenticated]);
 
@@ -42,7 +45,6 @@ export default function Header() {
     dispatch(logout());
     dispatch(peopleApi.util.resetApiState());
     dispatch(authApi.util.resetApiState());
-    setShowLogin(false);
     navigate("/", { replace: true });
   };
 
@@ -54,6 +56,16 @@ export default function Header() {
     navigate("/favourites");
   };
 
+  const simulateExpiredToken = () => {
+    store.dispatch(
+      loginSuccess({
+        user: { id: "1", name: "Luke Skywalker", email: "luke@starwars.com" },
+        accessToken: "expired_token", // simulate expiry
+        refreshToken: "mock_refresh_token", // valid refresh token
+      })
+    );
+  };
+
   return (
     <header className="app-header">
       <h1 className="app-header__title">
@@ -61,6 +73,13 @@ export default function Header() {
           Star Wars App
         </Link>
       </h1>
+
+      <PaginationButton
+        onClick={simulateExpiredToken}
+        style={{ marginTop: "0.5rem" }}
+      >
+        Simulate Expired Token
+      </PaginationButton>
 
       {isAuthenticated && userName && (
         <div className="app-header__center">

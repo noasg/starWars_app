@@ -7,7 +7,7 @@ interface User {
   password: string;
 }
 
-// Mock users database with password
+// Mock users database
 const users: User[] = [
   {
     id: "1",
@@ -53,7 +53,18 @@ export const handlers = [
   }),
 
   // REFRESH
-  http.post("/auth/refresh", () => {
+  http.post("/auth/refresh", async ({ request }) => {
+    const { refreshToken } = (await request.json()) as { refreshToken: string };
+
+    // If refresh token is invalid, return 401
+    if (refreshToken === "expired_token") {
+      return HttpResponse.json(
+        { message: "Refresh token expired" },
+        { status: 401 }
+      );
+    }
+
+    // Otherwise return new access token
     return HttpResponse.json(
       { accessToken: "mock_new_access_token" },
       { status: 200 }
