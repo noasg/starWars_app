@@ -6,20 +6,26 @@ import type { Person } from "../types/Person";
 import "./PeoplePage.scss";
 import { useSelector, useDispatch } from "react-redux";
 import { setImages } from "../services/imageCacheSlice";
-import type { RootState } from "../services/store"; // adjust path
+import type { RootState } from "../services/store";
 import Pagination from "../molecules/Pagination/Pagination";
 import LoaderSection from "../molecules/LoaderSection/LoaderSection";
+import { useParams, useNavigate } from "react-router-dom";
 
 export default function PeoplePage() {
   const [page, setPage] = useState(1);
-  const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isFetchingNext, setIsFetchingNext] = useState(false);
 
   const { data, isLoading, isError, isFetching } = useGetPeopleQuery(page);
-
   const imageMap = useSelector((state: RootState) => state.imageCache);
   const dispatch = useDispatch();
+
+  const params = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
+  // Detect back/forward navigation
+  useEffect(() => {
+    console.log("URL changed, current modal person:", params.id ?? "none");
+  }, [params.id]);
 
   // Cache images in Redux
   useEffect(() => {
@@ -31,14 +37,12 @@ export default function PeoplePage() {
           `https://picsum.photos/seed/${person.name}/150/150`;
       }
     });
-
     if (Object.keys(newImages).length > 0) {
-      console.log("Caching images:", newImages);
       dispatch(setImages(newImages));
     }
   }, [data, imageMap, dispatch]);
 
-  // Reset fetching-next flag when new data arrives
+  // Reset fetching-next flag
   useEffect(() => {
     if (!isFetching && isFetchingNext) {
       const timer = setTimeout(() => {
@@ -47,6 +51,23 @@ export default function PeoplePage() {
       return () => clearTimeout(timer);
     }
   }, [isFetching, isFetchingNext]);
+
+  // Determine modal directly from URL
+  const selectedPerson: Person | null = params.id
+    ? (data?.results.find((p) => p.name === params.id) ?? null)
+    : null;
+
+  const selectedImage: string | null = selectedPerson
+    ? `https://picsum.photos/seed/${selectedPerson.name}/150/150`
+    : null;
+
+  const handleCardClick = (person: Person) => {
+    navigate(`/people/${person.name}`);
+  };
+
+  const handleModalClose = () => {
+    navigate("/"); // closing modal just navigates back to main page
+  };
 
   const handleNext = () => {
     if (!data?.next || isFetchingNext) return;
@@ -61,7 +82,6 @@ export default function PeoplePage() {
   };
 
   if (isError) return <div>Error loading people.</div>;
-
   if (isLoading || isFetchingNext) {
     return (
       <div className="people-page">
@@ -78,19 +98,15 @@ export default function PeoplePage() {
       <PeopleList
         people={data?.results ?? []}
         imageMap={imageMap}
-        onCardClick={(person, img) => {
-          console.log("Card clicked:", person.name);
-          setSelectedPerson(person);
-          setSelectedImage(img);
-        }}
-        disabled={selectedPerson !== null}
+        onCardClick={handleCardClick}
+        disabled={!!selectedPerson}
       />
 
       {selectedPerson && selectedImage && (
         <CharacterDetailsModal
           person={selectedPerson}
           image={selectedImage}
-          onClose={() => setSelectedPerson(null)}
+          onClose={handleModalClose}
         />
       )}
 

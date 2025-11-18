@@ -17,3 +17,44 @@
     margin: 0.3rem 0;
   }
 }
+
+.character-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.character-modal h2 {
+  margin: 0;
+}
+
+/* HEADER BAR */
+.character-modal__header {
+  background: #b2641f;
+  color: #fff;
+  padding: 1rem;
+  text-align: center;
+  border-radius: 6px 6px 0 0;
+}
+
+.character-modal__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0rem;
+}
+
+/* IMAGE */
+.character-modal__image {
+  width: calc(100% - 4rem);
+  margin: 0 2rem;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+/* DETAILS */
+.character-modal__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}

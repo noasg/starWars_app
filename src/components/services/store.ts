@@ -1,11 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { peopleApi } from "./peopleApi";
-import imageCacheReducer from "./imageCacheSlice"; // import your slice
+import imageCacheReducer from "./imageCacheSlice";
+import authReducer from "./authSlice";
+import { authApi } from "./authApi";
 
 export const store = configureStore({
   reducer: {
     [peopleApi.reducerPath]: peopleApi.reducer,
-    imageCache: imageCacheReducer, // add the image cache slice
+    [authApi.reducerPath]: authApi.reducer,
+    auth: authReducer,
+    imageCache: imageCacheReducer,
   },
   middleware: (getDefault) => getDefault().concat(peopleApi.middleware),
 });
