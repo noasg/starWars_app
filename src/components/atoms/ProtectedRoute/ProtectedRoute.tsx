@@ -17,7 +17,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   if (!isAuthenticated) {
     return (
       <Navigate
-        to={`/login?next=${encodeURIComponent(location.pathname)}`}
+        to={`/?next=${encodeURIComponent(location.pathname)}`}
         replace
       />
     );

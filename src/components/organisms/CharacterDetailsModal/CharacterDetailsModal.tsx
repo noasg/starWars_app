@@ -2,7 +2,7 @@ import Backdrop from "../../atoms/Backdrop/Backdrop";
 import Modal from "../../molecules/Modal/Modal";
 import PaginationButton from "../../atoms/PaginationButton/PaginationButton";
 import { useSelector } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import type { Person } from "../../types/Person";
 import type { RootState } from "../../services/store";
 import "./CharacterDetailsModal.scss";
@@ -17,7 +17,6 @@ export default function CharacterDetailsModal({
   onClose: () => void;
 }) {
   const navigate = useNavigate();
-  const location = useLocation();
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
@@ -25,7 +24,8 @@ export default function CharacterDetailsModal({
   const handleAddToFavorites = () => {
     if (!isAuthenticated) {
       // Redirect to login with next = current modal URL
-      navigate(`/login?next=${encodeURIComponent(location.pathname)}`);
+      const nextAction = `addFavourite:${person.name}`;
+      navigate(`/?next=${encodeURIComponent(nextAction)}`);
       return;
     }
 

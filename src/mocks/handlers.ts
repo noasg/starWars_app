@@ -23,6 +23,27 @@ const users: User[] = [
   },
 ];
 
+// Mock people data
+const mockPeopleArray = [
+  {
+    name: "Luke Skywalker",
+    height: "172",
+    mass: "77",
+    birth_year: "19BBY",
+    films: [],
+    created: new Date().toISOString(),
+  },
+  {
+    name: "Leia Organa",
+    height: "150",
+    mass: "49",
+    birth_year: "19BBY",
+    films: [],
+    created: new Date().toISOString(),
+  },
+  // Add more as needed
+];
+
 export const handlers = [
   // LOGIN
   http.post("/auth/login", async ({ request }) => {
@@ -30,7 +51,6 @@ export const handlers = [
       email: string;
       password: string;
     };
-
     const user = users.find(
       (u) => u.email === email && u.password === password
     );
@@ -56,7 +76,6 @@ export const handlers = [
   http.post("/auth/refresh", async ({ request }) => {
     const { refreshToken } = (await request.json()) as { refreshToken: string };
 
-    // If refresh token is invalid, return 401
     if (refreshToken === "expired_token") {
       return HttpResponse.json(
         { message: "Refresh token expired" },
@@ -64,7 +83,6 @@ export const handlers = [
       );
     }
 
-    // Otherwise return new access token
     return HttpResponse.json(
       { accessToken: "mock_new_access_token" },
       { status: 200 }
@@ -72,7 +90,35 @@ export const handlers = [
   }),
 
   // LOGOUT
-  http.post("/auth/logout", () => {
-    return new HttpResponse(null, { status: 204 });
+  http.post("/auth/logout", () => new HttpResponse(null, { status: 204 })),
+
+  // PEOPLE endpoint
+  http.get("/people", ({ request }) => {
+    const auth = request.headers.get("authorization");
+
+    // Simulate 401 if token is expired
+    if (auth === "Bearer expired_token") {
+      return HttpResponse.json({ message: "Token expired" }, { status: 401 });
+    }
+
+    return HttpResponse.json(
+      { count: mockPeopleArray.length, results: mockPeopleArray },
+      { status: 200 }
+    );
+  }),
+
+  http.get("/protected/secret", ({ request }) => {
+    const auth = request.headers.get("authorization");
+
+    if (auth === "Bearer expired_token") {
+      console.log("⚠️ MSW: returning 401 for expired token");
+      return HttpResponse.json({ message: "Token expired" }, { status: 401 });
+    }
+
+    console.log("✅ MSW: returning protected data");
+    return HttpResponse.json(
+      { secret: "The Force is strong with you!" },
+      { status: 200 }
+    );
   }),
 ];

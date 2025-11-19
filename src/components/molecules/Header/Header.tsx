@@ -5,10 +5,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../services/authSlice";
 import { peopleApi } from "../../services/peopleApi";
 import { authApi } from "../../services/authApi";
-import { type RootState } from "../../services/store";
+import {
+  // store,
+  type RootState,
+} from "../../services/store";
 import PaginationButton from "../../atoms/PaginationButton/PaginationButton";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import CloseButton from "../../atoms/CloseButton/CloseButton";
+// import { protectedApi } from "../../services/protectedApi";
 
 export default function Header() {
   const [showLogin, setShowLogin] = useState(false);
@@ -57,8 +61,29 @@ export default function Header() {
     navigate("/favourites");
   };
 
+  // const simulateProtectedCall = () => {
+  //   store
+  //     .dispatch(
+  //       protectedApi.endpoints.getSecretData.initiate(undefined, {
+  //         forceRefetch: true,
+  //       })
+  //     )
+  //     .unwrap()
+  //     .then((res) => console.log("Protected data result:", res))
+  //     .catch((err) => console.error("Protected call failed:", err));
+  // };
+
   return (
     <header className="app-header">
+      {/* <PaginationButton
+        onClick={simulateProtectedCall}
+        style={{ marginTop: "0.5rem" }}
+      >
+        Simulate <br />
+        Expired <br />
+        Token
+      </PaginationButton> */}
+
       <h1 className="app-header__title">
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
           Star Wars
@@ -67,7 +92,7 @@ export default function Header() {
 
       {isAuthenticated && userName && (
         <div className="app-header__center">
-          <span className="welcome-msg">Welcome back, {userName}!</span>
+          <span className="welcome-msg">{userName}</span>
           <PaginationButton onClick={goToFavorites}>Favorites</PaginationButton>
         </div>
       )}
