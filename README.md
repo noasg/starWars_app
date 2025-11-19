@@ -9,12 +9,12 @@ A React + Redux Toolkit application to browse Star Wars characters, view details
  - Automatic modal URL routing (/people/:id) to support deep linking.<br/>
  - Refresh token handling with automatic re-authentication.<br/><br/>
 
-     -> Installation<br/><br/>
+     -> Installation<br/>
  - Clone or download the archive
  - npm install 
  - npm run dev<br/><br/>
 
-     -> Folder structure<br/><br/>
+     -> Folder structure<br/>
    src/<br/>
   ├── components/<br/>
   │   ├── atoms/             # Buttons, CloseButton, Backdrop, etc.<br/>
