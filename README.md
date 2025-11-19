@@ -16,7 +16,7 @@ A React + Redux Toolkit application to browse Star Wars characters, view details
 
      -> Folder structure
    src/
-  ├── components/
+  ├── components/<br/>
   │   ├── atoms/             # Buttons, CloseButton, Backdrop, etc.
   │   ├── molecules/         # PersonCard, Header, Pagination
   │   ├── organisms/         # CharacterDetailsModal, PeopleList
