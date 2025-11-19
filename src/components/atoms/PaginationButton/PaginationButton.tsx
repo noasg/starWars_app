@@ -1,3 +1,7 @@
+// A reusable button component for pagination, navigation, Login, Logout, etc.
+// Inherits all standard HTML button attributes (like onClick, disabled, type, etc.).
+// Children are rendered inside the button, allowing custom text or elements.
+
 import React from "react";
 import "./PaginationButton.scss";
 

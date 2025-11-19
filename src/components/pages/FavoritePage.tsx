@@ -1,3 +1,7 @@
+// Displays a user's favorite characters.
+// Combines server-side favorites (from user object) and sessionStorage favorites (temporary, local).
+// Allows opening a modal with character details by clicking on a card.
+
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import PersonCard from "../molecules/PersonalCard/PersonCard";
@@ -7,7 +11,9 @@ import type { RootState } from "../services/store";
 import "./FavouritesPage.scss";
 
 export default function FavouritesPage() {
+  // Get the logged-in user from Redux
   const user = useSelector((state: RootState) => state.auth.user);
+  // State for the currently selected character to show in modal
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
   if (!user) return <p>No user logged in.</p>;
@@ -18,9 +24,6 @@ export default function FavouritesPage() {
   const getImageUrl = (person: Person) =>
     `https://picsum.photos/seed/${encodeURIComponent(person.name)}/150/150`;
 
-  /**
-   * Load sessionStorage favourites (no useMemo → allowed by React Compiler)
-   */
   const raw = sessionStorage.getItem("sessionFavourites");
   let parsedSessionFavourites: Person[] = [];
 
@@ -30,10 +33,10 @@ export default function FavouritesPage() {
     parsedSessionFavourites = [];
   }
 
-  /**
-   * Merge backend + session favourites
-   * Dedupe by name (safer — session entries may lack ID)
-   */
+  // Merge favorites:
+  // Start with the user's saved favorites from the dummy object
+  // Add sessionStorage favorites that are not already in user's favorites
+
   const mergedFavourites: Person[] = [
     ...user.favorites,
     ...parsedSessionFavourites.filter(

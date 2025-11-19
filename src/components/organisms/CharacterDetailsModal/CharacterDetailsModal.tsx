@@ -1,3 +1,5 @@
+//Modal for a character's details, with option to add to favourites.
+
 import Backdrop from "../../atoms/Backdrop/Backdrop";
 import Modal from "../../molecules/Modal/Modal";
 import PaginationButton from "../../atoms/PaginationButton/PaginationButton";
@@ -17,12 +19,18 @@ export default function CharacterDetailsModal({
   onClose: () => void;
 }) {
   const navigate = useNavigate();
+
+  // Get authentication status from Redux
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
 
+  // if user is logged in, add the character to localSession favourites
+  // those will be merged with dummy favourites on FavouritesPage
   const handleAddToFavorites = () => {
     if (!isAuthenticated) {
+      // if not logged in, redirect to next -> will listed to this action in header so
+      // i can display the login modal
       const nextAction = `addFavourite:${person.name}`;
       navigate(`/?next=${encodeURIComponent(nextAction)}`);
       return;
@@ -37,7 +45,7 @@ export default function CharacterDetailsModal({
       parsed = [];
     }
 
-    // Check duplicate by name
+    // checks if character is already in favourites
     const exists = parsed.some((p) => p.name === person.name);
     if (exists) return;
 

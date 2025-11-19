@@ -1,3 +1,6 @@
+// Displays a section of PersonCardSkeleton loaders to indicate content is loading.
+// Useful for showing a placeholder while fetching data (e.g., characters list)
+
 import PersonCardSkeleton from "../PersonCardSkeleton/PersonCardSkeleton";
 import "./LoaderSection.scss";
 

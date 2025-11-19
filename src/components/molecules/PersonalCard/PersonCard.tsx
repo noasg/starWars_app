@@ -1,3 +1,6 @@
+// Displays a character's image and name as a clickable card.
+// Supports keyboard accessibility (Enter/Space) and hover focus.
+
 import { useRef } from "react";
 import type { Person } from "../../types/Person";
 import "./PersonCard.scss";
@@ -24,11 +27,11 @@ export default function PersonCard({
       role="button"
       tabIndex={disabled ? -1 : 0} // cannot be focused if disabled
       onClick={() => {
-        if (disabled) return; // <-- skip if modal is open
+        if (disabled) return; 
         onClick(person, imageUrl);
       }}
       onKeyDown={(e) => {
-        if (disabled) return; // <-- skip if modal is open
+        if (disabled) return; /
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           onClick(person, imageUrl);

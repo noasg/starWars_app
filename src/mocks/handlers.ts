@@ -1,6 +1,7 @@
 import { http, HttpResponse } from "msw";
 import type { Person } from "../components/types/Person";
 
+// User type for mock database
 interface User {
   id: string;
   name: string;
@@ -66,8 +67,9 @@ const users: User[] = [
   },
 ];
 
+//Handlers for MSW
 export const handlers = [
-  // LOGIN
+  // LOGIN endpoint
   http.post("/auth/login", async ({ request }) => {
     const { email, password } = (await request.json()) as {
       email: string;
@@ -78,12 +80,14 @@ export const handlers = [
     );
 
     if (!user) {
+      // Return 401 if credentials are invalid
       return HttpResponse.json(
         { message: "Invalid credentials" },
         { status: 401 }
       );
     }
 
+    // Return mock access & refresh tokens + user data
     return HttpResponse.json(
       {
         accessToken: "mock_access_token",
@@ -102,14 +106,14 @@ export const handlers = [
   // REFRESH
   http.post("/auth/refresh", async ({ request }) => {
     const { refreshToken } = (await request.json()) as { refreshToken: string };
-
+    // Simulate expired refresh token
     if (refreshToken === "expired_token") {
       return HttpResponse.json(
         { message: "Refresh token expired" },
         { status: 401 }
       );
     }
-
+    // Return new access token
     return HttpResponse.json(
       { accessToken: "mock_new_access_token" },
       { status: 200 }

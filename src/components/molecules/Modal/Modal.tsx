@@ -1,3 +1,6 @@
+// A custom modal container that displays content over the main UI.
+// Includes a close button and supports accessibility attributes.
+
 import CloseButton from "../../atoms/CloseButton/CloseButton";
 import "./Modal.scss";
 

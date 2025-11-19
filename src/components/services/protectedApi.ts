@@ -1,4 +1,4 @@
-// services/protectedApi.ts
+//dummy route for protected API calls - used for testing token refresh logic
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithReauth } from "./baseQueryWithReauth";
 

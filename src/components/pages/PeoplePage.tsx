@@ -1,3 +1,8 @@
+// Displays a paginated list of Star Wars characters.
+// Fetches data via RTK Query
+// Caches images in Redux
+// Shows skeleton loader while fetching
+
 import { useState, useEffect } from "react";
 import { useGetPeopleQuery } from "../services/peopleApi";
 import PeopleList from "../organisms/PeopleList/PeopleList";
@@ -12,18 +17,24 @@ import LoaderSection from "../molecules/LoaderSection/LoaderSection";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 export default function PeoplePage() {
+  // Current page for pagination
   const [page, setPage] = useState(1);
+  // Flag indicating if we are fetching the next page
   const [isFetchingNext, setIsFetchingNext] = useState(false);
 
   const { data, isLoading, isError, isFetching } = useGetPeopleQuery(page);
+
+  // Cached images from Redux
   const imageMap = useSelector((state: RootState) => state.imageCache);
   const dispatch = useDispatch();
 
+  // React Router hooks
   const params = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Cache images
+  // Cache images in Redux
+  // Only generate new images for characters not already cached
   useEffect(() => {
     if (!data) return;
     const newImages: Record<string, string> = {};
@@ -38,7 +49,7 @@ export default function PeoplePage() {
     }
   }, [data, imageMap, dispatch]);
 
-  // Reset fetching-next flag
+  // Reset the fetching-next flag when data has finished fetching
   useEffect(() => {
     if (!isFetching && isFetchingNext) {
       const timer = setTimeout(() => {
@@ -48,7 +59,7 @@ export default function PeoplePage() {
     }
   }, [isFetching, isFetchingNext]);
 
-  // Modal person determined by URL param
+  // Determine the person to show in modal based on URL param
   const modalPerson: Person | null = params.id
     ? (data?.results.find((p) => p.name === params.id) ?? null)
     : null;
@@ -57,20 +68,22 @@ export default function PeoplePage() {
     ? `https://picsum.photos/seed/${modalPerson.name}/150/150`
     : null;
 
+  // When a card is clicked, open modal by updating URL with person's name
   const handleCardClick = (person: Person) => {
-    // Push modal URL but keep current page as background
     navigate(`/people/${person.name}`, { state: { background: location } });
   };
 
+  // Close modal
+  // Navigate back to previous page if available, otherwise go to root
   const handleModalClose = () => {
-    // Close modal → go back to background page if exists
     if (location.state?.background) {
       navigate(-1);
     } else {
-      navigate("/"); // fallback
+      navigate("/");
     }
   };
 
+  // Pagination handlers
   const handleNext = () => {
     if (!data?.next || isFetchingNext) return;
     setIsFetchingNext(true);
@@ -83,6 +96,7 @@ export default function PeoplePage() {
     setPage((prev) => prev - 1);
   };
 
+  // Handle loading and error states
   if (isError) return <div>Error loading people.</div>;
   if (isLoading) {
     return (

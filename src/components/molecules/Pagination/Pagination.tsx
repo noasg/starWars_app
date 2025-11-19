@@ -1,3 +1,6 @@
+// Renders "Prev" and "Next" buttons for paginated content.
+// Disables buttons based on fetch status or availability of pages.
+
 import PaginationButton from "../../atoms/PaginationButton/PaginationButton";
 import "./Pagination.scss";
 

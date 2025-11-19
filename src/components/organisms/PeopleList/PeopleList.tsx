@@ -1,3 +1,5 @@
+/// Renders a list/grid of PersonCard components.
+
 import PersonCard from "../../molecules/PersonalCard/PersonCard";
 import type { Person } from "../../types/Person";
 import "./PeopleList.scss";
@@ -16,7 +18,6 @@ export default function PeopleList({
   return (
     <div className="people-list">
       {people.map((person) => {
-        // const imageUrl = `https://picsum.photos/seed/${person.name}/150/150`;
         return (
           <PersonCard
             key={person.name}

@@ -1,3 +1,8 @@
+// - Displays app title, user info, login/logout buttons
+// - Handles opening the login modal
+// - Supports "nextAfterLogin" for redirecting after login
+// - Handles adding session favourites automatically after login
+
 import { useState, useEffect } from "react";
 import "./Header.scss";
 import LoginForm from "../LoginForm/LoginForm";
@@ -12,18 +17,24 @@ import CloseButton from "../../atoms/CloseButton/CloseButton";
 import type { Person } from "../../types/Person";
 
 export default function Header() {
+  // State to control login modal visibility
   const [showLogin, setShowLogin] = useState(false);
+  // Store action to perform after login
   const [nextAfterLogin, setNextAfterLogin] = useState<string | null>(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Redux selectors
   const isAuthenticated = useSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
   const userName = useSelector((state: RootState) => state.auth.user?.name);
 
-  // Open login modal automatically if location has next query
+  // Called when login succeeds
+  // - Hides login modal
+  // - Performs any deferred action stored in "nextAfterLogin"
+  // - Redirects user to home page
 
   const handleLoginSuccess = () => {
     setShowLogin(false);
@@ -31,6 +42,7 @@ export default function Header() {
     if (nextAfterLogin) {
       const [action, payload] = nextAfterLogin.split(":");
 
+      // Example action: adding a favourite after login
       if (action === "addFavourite" && payload) {
         // Add person to session favourites after login
         const raw = sessionStorage.getItem("sessionFavourites");
@@ -42,6 +54,7 @@ export default function Header() {
           parsed = [];
         }
 
+        // Prevent duplicates fields
         const exists = parsed.some((p) => p.name === payload);
         if (!exists) {
           const uniqueId = `sess-${Date.now()}-${Math.random().toString(16).slice(2, 6)}`;
@@ -57,6 +70,11 @@ export default function Header() {
     navigate("/", { replace: true });
   };
 
+  // Logout handler
+  // Clears session favourites
+  // Dispatches logout and resets RTK Query state
+  // Sets temporary flag "loggingOutFromProtected" to prevent redirect loops
+
   const handleLogout = () => {
     sessionStorage.setItem("loggingOutFromProtected", "true");
     setShowLogin(false);
@@ -70,6 +88,9 @@ export default function Header() {
     }, 100);
   };
 
+  // useEffect to automatically open the login modal
+  // it listens to URL query parameter "next" -  coming fromCharacterDetailsModal for example
+
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const next = params.get("next");
@@ -82,6 +103,8 @@ export default function Header() {
     }
   }, [location.search, isAuthenticated, location.pathname]);
 
+  // Navigate to favourites page
+  // Redirects to login if user is not authenticated
   const goToFavorites = () => {
     if (!isAuthenticated) {
       navigate("/?next=/favourites");

@@ -1,3 +1,5 @@
+// A simple reusable button to close modals -Character and LoginForm in my case
+
 import "./CloseButton.scss";
 
 interface CloseButtonProps {
