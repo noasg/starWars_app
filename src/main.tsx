@@ -6,15 +6,15 @@ import { Provider } from "react-redux";
 import { store } from "./components/services/store.ts";
 
 async function prepare() {
-  if (import.meta.env.DEV) {
-    const { worker } = await import("./mocks/browser");
-    await worker.start({
-      onUnhandledRequest: "bypass",
-      serviceWorker: {
-        url: "/mockServiceWorker.js",
-      },
-    });
-  }
+  // if (import.meta.env.DEV) {
+  const { worker } = await import("./mocks/browser");
+  await worker.start({
+    onUnhandledRequest: "bypass",
+    serviceWorker: {
+      url: "/mockServiceWorker.js",
+    },
+  });
+  // }
 }
 
 prepare().then(() => {
