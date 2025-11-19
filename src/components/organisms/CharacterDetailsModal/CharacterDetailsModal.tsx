@@ -72,7 +72,7 @@ export default function CharacterDetailsModal({
             </p>
 
             {/* Add to favourites button */}
-            <div style={{ marginTop: "1rem" }}>
+            <div style={{ marginBottom: "1rem" }}>
               <PaginationButton onClick={handleAddToFavorites}>
                 Add to favourites
               </PaginationButton>

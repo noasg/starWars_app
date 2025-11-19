@@ -1,3 +1,4 @@
+import CloseButton from "../../atoms/CloseButton/CloseButton";
 import "./Modal.scss";
 
 export default function Modal({
@@ -9,9 +10,7 @@ export default function Modal({
 }) {
   return (
     <div className="modal" role="dialog" aria-modal="true">
-      <button className="modal__close" onClick={onClose} aria-label="Close">
-        ✕
-      </button>
+      <CloseButton onClick={onClose} ariaLabel="Close modal" className="btn" />
       {children}
     </div>
   );

@@ -90,10 +90,6 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
 
       {error && <div className="error-banner">{error}</div>}
 
-      {/* <button type="submit" disabled={isLoading}>
-        {isLoading ? "Logging in..." : "Login"}
-      </button> */}
-
       <PaginationButton>
         {isLoading ? "Logging in..." : "Login"}
       </PaginationButton>

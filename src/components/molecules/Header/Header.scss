@@ -7,20 +7,20 @@
   color: #fff;
   position: relative; // needed for centering middle content
 
-  button {
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    font-size: 1rem;
-    background-color: #ffcc00;
-    border: none;
-    border-radius: 4px;
-    color: #000;
-    font-weight: bold;
+  // button {
+  //   padding: 0.5rem 1rem;
+  //   cursor: pointer;
+  //   font-size: 1rem;
+  //   background-color: #ffcc00;
+  //   border: none;
+  //   border-radius: 4px;
+  //   color: #000;
+  //   font-weight: bold;
 
-    &:hover {
-      background-color: #ffdd33;
-    }
-  }
+  //   &:hover {
+  //     background-color: #ffdd33;
+  //   }
+  // }
 
   &__title {
     flex: 1;
@@ -67,13 +67,42 @@
     width: 320px;
   }
 
-  .close-btn {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    font-size: 1.5rem;
-    background: none;
-    border: none;
-    cursor: pointer;
+  // .close-btn {
+  //   position: absolute;
+  //   top: 0.5rem;
+  //   right: 0.5rem;
+  //   font-size: 1.5rem;
+  //   background: none;
+  //   border: none;
+  //   cursor: pointer;
+  // }
+}
+
+@media (max-width: 600px) {
+  .app-header {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+
+    &__center {
+      position: static; // remove absolute positioning
+      transform: none;
+      left: auto;
+
+      display: flex;
+      flex-direction: column; // stack vertically
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    &__right {
+      justify-content: center;
+      width: 100%;
+    }
+
+    &__title {
+      text-align: center;
+      width: 100%;
+    }
   }
 }

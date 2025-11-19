@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import "./Header.scss";
 import LoginForm from "../LoginForm/LoginForm";
 import { useDispatch, useSelector } from "react-redux";
-import { loginSuccess, logout } from "../../services/authSlice";
+import { logout } from "../../services/authSlice";
 import { peopleApi } from "../../services/peopleApi";
 import { authApi } from "../../services/authApi";
-import { store, type RootState } from "../../services/store";
+import { type RootState } from "../../services/store";
 import PaginationButton from "../../atoms/PaginationButton/PaginationButton";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import CloseButton from "../../atoms/CloseButton/CloseButton";
 
 export default function Header() {
   const [showLogin, setShowLogin] = useState(false);
@@ -50,36 +51,19 @@ export default function Header() {
 
   const goToFavorites = () => {
     if (!isAuthenticated) {
-      navigate("/?next=/favourites"); // keep user on current page, modal opens automatically
+      navigate("/?next=/favourites");
       return;
     }
     navigate("/favourites");
-  };
-
-  const simulateExpiredToken = () => {
-    store.dispatch(
-      loginSuccess({
-        user: { id: "1", name: "Luke Skywalker", email: "luke@starwars.com" },
-        accessToken: "expired_token", // simulate expiry
-        refreshToken: "mock_refresh_token", // valid refresh token
-      })
-    );
   };
 
   return (
     <header className="app-header">
       <h1 className="app-header__title">
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-          Star Wars App
+          Star Wars
         </Link>
       </h1>
-
-      <PaginationButton
-        onClick={simulateExpiredToken}
-        style={{ marginTop: "0.5rem" }}
-      >
-        Simulate Expired Token
-      </PaginationButton>
 
       {isAuthenticated && userName && (
         <div className="app-header__center">
@@ -101,13 +85,10 @@ export default function Header() {
       {!isAuthenticated && showLogin && (
         <div className="login-modal">
           <div className="login-modal__content">
-            <button
-              className="close-btn"
+            <CloseButton
               onClick={() => setShowLogin(false)}
-              aria-label="Close login form"
-            >
-              &times;
-            </button>
+              ariaLabel="Close login form"
+            />
             <LoginForm onSuccess={handleLoginSuccess} />
           </div>
         </div>

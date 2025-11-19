@@ -87,7 +87,7 @@ export default function PeoplePage() {
   if (isLoading || isFetchingNext) {
     return (
       <div className="people-page">
-        <h1 className="people-page__title">Star Wars Characters</h1>
+        <h1 className="people-page__title">Characters</h1>
         <LoaderSection count={10} />
       </div>
     );
@@ -95,7 +95,7 @@ export default function PeoplePage() {
 
   return (
     <div className="people-page">
-      <h1 className="people-page__title">Star Wars Characters</h1>
+      <h1 className="people-page__title">Characters</h1>
 
       <PeopleList
         people={data?.results ?? []}
