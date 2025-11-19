@@ -27,11 +27,11 @@ export default function PersonCard({
       role="button"
       tabIndex={disabled ? -1 : 0} // cannot be focused if disabled
       onClick={() => {
-        if (disabled) return; 
+        if (disabled) return;
         onClick(person, imageUrl);
       }}
       onKeyDown={(e) => {
-        if (disabled) return; /
+        if (disabled) return;
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           onClick(person, imageUrl);
