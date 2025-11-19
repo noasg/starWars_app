@@ -63,6 +63,8 @@ export default function CharacterDetailsModal({
     console.log("Added session favourite:", newPerson);
   };
 
+  const isFavouritesPage = location.pathname === "/favourites";
+
   return (
     <>
       <Backdrop onClick={onClose} />
@@ -100,12 +102,14 @@ export default function CharacterDetailsModal({
               {new Date(person.created).toLocaleDateString("en-GB")}
             </p>
 
-            {/* Add to favourites button */}
-            <div style={{ marginBottom: "1rem" }}>
-              <PaginationButton onClick={handleAddToFavorites}>
-                Add to favourites
-              </PaginationButton>
-            </div>
+            {/* Add to favourites button - only show if NOT on favourites page */}
+            {!isFavouritesPage && (
+              <div style={{ marginBottom: "1rem" }}>
+                <PaginationButton onClick={handleAddToFavorites}>
+                  Add to favourites
+                </PaginationButton>
+              </div>
+            )}
           </div>
         </div>
       </Modal>
