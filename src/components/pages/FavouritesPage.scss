@@ -7,15 +7,15 @@
 
   // Limit max columns to 5
   @media (min-width: 1500px) {
-    grid-template-columns: repeat(4, 220px);
+    grid-template-columns: repeat(5, 220px);
   }
 
   @media (max-width: 1499px) and (min-width: 1200px) {
-    grid-template-columns: repeat(3, 220px);
+    grid-template-columns: repeat(4, 220px);
   }
 
   @media (max-width: 1199px) and (min-width: 900px) {
-    grid-template-columns: repeat(2, 220px);
+    grid-template-columns: repeat(3, 220px);
   }
 
   @media (max-width: 899px) and (min-width: 600px) {
