@@ -84,7 +84,7 @@ export default function PeoplePage() {
   };
 
   if (isError) return <div>Error loading people.</div>;
-  if (isLoading || isFetchingNext) {
+  if (isLoading) {
     return (
       <div className="people-page">
         <h1 className="people-page__title">Characters</h1>
