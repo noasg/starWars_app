@@ -14,7 +14,7 @@ A React + Redux Toolkit application to browse Star Wars characters, view details
  - npm install or yarn install
  - npm run dev
 
-     -> Folder structure
+     -> Folder structure<br/>
    src/<br/>
   ├── components/<br/>
   │   ├── atoms/             # Buttons, CloseButton, Backdrop, etc.<br/>
