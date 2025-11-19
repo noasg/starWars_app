@@ -10,7 +10,7 @@ export default function Modal({
 }) {
   return (
     <div className="modal" role="dialog" aria-modal="true">
-      <CloseButton onClick={onClose} ariaLabel="Close modal" className="btn" />
+      <CloseButton onClick={onClose} ariaLabel="Close modal" />
       {children}
     </div>
   );
