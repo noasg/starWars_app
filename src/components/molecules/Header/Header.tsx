@@ -47,9 +47,12 @@ export default function Header() {
   };
 
   const handleLogout = () => {
+    sessionStorage.removeItem("sessionFavourites");
+
     dispatch(logout());
     dispatch(peopleApi.util.resetApiState());
     dispatch(authApi.util.resetApiState());
+
     navigate("/", { replace: true });
   };
 

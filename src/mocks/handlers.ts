@@ -13,9 +13,9 @@ interface User {
 const users: User[] = [
   {
     id: "1",
-    name: "Luke Skywalker",
-    email: "luke@starwars.com",
-    password: "jedi1",
+    name: "Adrian Popescu",
+    email: "adrian@starwars.com",
+    password: "jedi",
     favorites: [
       {
         id: "1",
@@ -59,9 +59,9 @@ const users: User[] = [
   },
   {
     id: "2",
-    name: "Leia Organa",
-    email: "leia@starwars.com",
-    password: "jedi2",
+    name: "Adrian Pop",
+    email: "adrian2@starwars.com",
+    password: "jedi",
     favorites: [],
   },
 ];

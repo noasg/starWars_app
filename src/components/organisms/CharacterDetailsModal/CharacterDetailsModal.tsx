@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import type { Person } from "../../types/Person";
 import type { RootState } from "../../services/store";
 import "./CharacterDetailsModal.scss";
+import saveFavoriteToSession from "../../utils/saveFavouriteToSession ";
 
 export default function CharacterDetailsModal({
   person,
@@ -23,15 +24,36 @@ export default function CharacterDetailsModal({
 
   const handleAddToFavorites = () => {
     if (!isAuthenticated) {
-      // Redirect to login with next = current modal URL
       const nextAction = `addFavourite:${person.name}`;
       navigate(`/?next=${encodeURIComponent(nextAction)}`);
       return;
     }
 
-    // Logged in → perform favourite action
-    console.log("Added to favourites:", person.name);
-    // TODO: dispatch your add-to-favourites action here
+    const raw = sessionStorage.getItem("sessionFavourites");
+    let parsed: Person[] = [];
+
+    try {
+      parsed = raw ? JSON.parse(raw) : [];
+    } catch {
+      parsed = [];
+    }
+
+    // Check duplicate by name
+    const exists = parsed.some((p) => p.name === person.name);
+    if (exists) return;
+
+    // Assign guaranteed unique ID
+    const uniqueId = `sess-${Date.now()}-${Math.random().toString(16).slice(2, 6)}`;
+
+    const newPerson: Person = {
+      ...person,
+      id: uniqueId,
+    };
+
+    parsed.push(newPerson);
+    sessionStorage.setItem("sessionFavourites", JSON.stringify(parsed));
+
+    console.log("Added session favourite:", newPerson);
   };
 
   return (
