@@ -15,15 +15,15 @@ A React + Redux Toolkit application to browse Star Wars characters, view details
  - npm run dev
 
      -> Folder structure
-   src/
+   src/<br/>
   ├── components/<br/>
-  │   ├── atoms/             # Buttons, CloseButton, Backdrop, etc.
-  │   ├── molecules/         # PersonCard, Header, Pagination
-  │   ├── organisms/         # CharacterDetailsModal, PeopleList
-  │   └── pages/             # PeoplePage, FavouritesPage
-  ├── services/              # Redux slices, RTK Query APIs, auth, image cache
-  ├── types/                 # TypeScript types
-  ├── App.tsx
+  │   ├── atoms/             # Buttons, CloseButton, Backdrop, etc.<br/>
+  │   ├── molecules/         # PersonCard, Header, Pagination<br/>
+  │   ├── organisms/         # CharacterDetailsModal, PeopleList<br/>
+  │   └── pages/             # PeoplePage, FavouritesPage<br/>
+  ├── services/              # Redux slices, RTK Query APIs, auth, image cache<br/>
+  ├── types/                 # TypeScript types<br/>
+  ├── App.tsx<br/>
   └── index.tsx
 
   -> To login, use 
