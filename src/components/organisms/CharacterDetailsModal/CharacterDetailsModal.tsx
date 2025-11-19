@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import type { Person } from "../../types/Person";
 import type { RootState } from "../../services/store";
 import "./CharacterDetailsModal.scss";
-import saveFavoriteToSession from "../../utils/saveFavouriteToSession ";
 
 export default function CharacterDetailsModal({
   person,

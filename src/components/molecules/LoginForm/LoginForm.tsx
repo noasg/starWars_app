@@ -3,6 +3,7 @@ import { useState, useRef, type FormEvent } from "react";
 import { useLoginMutation } from "../../services/authApi";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../../services/authSlice";
+import { useNavigate } from "react-router-dom"; // ⬅️ ADD THIS
 import "./LoginForm.scss";
 import PaginationButton from "../../atoms/PaginationButton/PaginationButton";
 
@@ -18,6 +19,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
   const emailRef = useRef<HTMLInputElement>(null);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // ⬅️ ADD THIS
   const [login, { isLoading }] = useLoginMutation();
 
   const handleSubmit = async (e: FormEvent) => {
@@ -32,6 +34,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
 
     try {
       const res = await login({ email, password }).unwrap();
+
       dispatch(
         loginSuccess({
           user: res.user,
@@ -39,10 +42,29 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
           refreshToken: res.refreshToken,
         })
       );
+
+      /** -----------------------------------------------
+       * 🔥 NEW LOGIC: Handle the `next` query parameter
+       * Example: ?next=addFavourite:R2-D2
+       * ----------------------------------------------- */
+      const params = new URLSearchParams(window.location.search);
+      const next = params.get("next");
+
+      if (next) {
+        if (next.startsWith("addFavourite:")) {
+          const personId = next.replace("addFavourite:", "");
+          navigate(`/people/${encodeURIComponent(personId)}`, {
+            replace: true,
+          });
+          return;
+        }
+      }
+
+      // Default after login
       if (onSuccess) onSuccess();
+      else navigate("/", { replace: true });
     } catch (err: any) {
       setError(err?.data?.message || "Login failed");
-      // Focus on email field on error
       emailRef.current?.focus();
     }
   };
