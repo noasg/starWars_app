@@ -7,12 +7,12 @@ A React + Redux Toolkit application to browse Star Wars characters, view details
  - Login/logout functionality with mock authentication API.<br/>
  - Skeleton loaders for smoother user experience while fetching data.<br/>
  - Automatic modal URL routing (/people/:id) to support deep linking.<br/>
- - Refresh token handling with automatic re-authentication.
+ - Refresh token handling with automatic re-authentication.<br/><br/>
 
      -> Installation<br/><br/>
  - Clone or download the archive
- - npm install or yarn install
- - npm run dev
+ - npm install 
+ - npm run dev<br/><br/>
 
      -> Folder structure<br/><br/>
    src/<br/>
