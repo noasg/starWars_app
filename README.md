@@ -1,6 +1,7 @@
 A React + Redux Toolkit application to browse Star Wars characters, view details in a modal, and manage favorites. Features include authentication, session persistence, and protected routes.
 
-    -> Features<br/><br/>
+    -> Features
+    <br/><br/>
  - Browse Star Wars characters fetched from SWAPI<br/>
  - View character details in a modal with image, height, mass, birth year, films, and more.<br/>
  - Add characters to favorites (stored in session and synced with user account).<br/>
