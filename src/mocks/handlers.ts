@@ -1,10 +1,12 @@
 import { http, HttpResponse } from "msw";
+import type { Person } from "../components/types/Person";
 
 interface User {
   id: string;
   name: string;
   email: string;
   password: string;
+  favorites: Person[];
 }
 
 // Mock users database
@@ -14,34 +16,54 @@ const users: User[] = [
     name: "Luke Skywalker",
     email: "luke@starwars.com",
     password: "jedi1",
+    favorites: [
+      {
+        id: "1",
+        name: "Luke Skywalker",
+        height: "172",
+        mass: "77",
+        birth_year: "19BBY",
+        films: [],
+        created: new Date().toISOString(),
+        eye_color: "",
+        gender: "",
+        hair_color: "",
+        skin_color: "",
+        homeworld: "",
+        species: [],
+        starships: [],
+        vehicles: [],
+        url: "",
+        edited: "",
+      },
+      {
+        id: "2",
+        name: "Leia Organa",
+        height: "150",
+        mass: "49",
+        birth_year: "19BBY",
+        films: [],
+        created: new Date().toISOString(),
+        eye_color: "",
+        gender: "",
+        hair_color: "",
+        skin_color: "",
+        homeworld: "",
+        species: [],
+        starships: [],
+        vehicles: [],
+        url: "",
+        edited: "",
+      },
+    ],
   },
   {
     id: "2",
     name: "Leia Organa",
     email: "leia@starwars.com",
     password: "jedi2",
+    favorites: [],
   },
-];
-
-// Mock people data
-const mockPeopleArray = [
-  {
-    name: "Luke Skywalker",
-    height: "172",
-    mass: "77",
-    birth_year: "19BBY",
-    films: [],
-    created: new Date().toISOString(),
-  },
-  {
-    name: "Leia Organa",
-    height: "150",
-    mass: "49",
-    birth_year: "19BBY",
-    films: [],
-    created: new Date().toISOString(),
-  },
-  // Add more as needed
 ];
 
 export const handlers = [
@@ -66,7 +88,12 @@ export const handlers = [
       {
         accessToken: "mock_access_token",
         refreshToken: "mock_refresh_token",
-        user: { id: user.id, name: user.name, email: user.email },
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          favorites: user.favorites,
+        },
       },
       { status: 200 }
     );
@@ -92,20 +119,20 @@ export const handlers = [
   // LOGOUT
   http.post("/auth/logout", () => new HttpResponse(null, { status: 204 })),
 
-  // PEOPLE endpoint
-  http.get("/people", ({ request }) => {
-    const auth = request.headers.get("authorization");
+  // // PEOPLE endpoint
+  // http.get("/people", ({ request }) => {
+  //   const auth = request.headers.get("authorization");
 
-    // Simulate 401 if token is expired
-    if (auth === "Bearer expired_token") {
-      return HttpResponse.json({ message: "Token expired" }, { status: 401 });
-    }
+  //   // Simulate 401 if token is expired
+  //   if (auth === "Bearer expired_token") {
+  //     return HttpResponse.json({ message: "Token expired" }, { status: 401 });
+  //   }
 
-    return HttpResponse.json(
-      { count: mockPeopleArray.length, results: mockPeopleArray },
-      { status: 200 }
-    );
-  }),
+  //   return HttpResponse.json(
+  //     { count: mockPeopleArray.length, results: mockPeopleArray },
+  //     { status: 200 }
+  //   );
+  // }),
 
   http.get("/protected/secret", ({ request }) => {
     const auth = request.headers.get("authorization");

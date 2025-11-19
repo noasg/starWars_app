@@ -1,4 +1,5 @@
 export interface Person {
+  id: string;
   name: string;
   birth_year: string;
   eye_color: string;

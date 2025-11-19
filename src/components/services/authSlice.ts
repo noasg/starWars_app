@@ -1,11 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { saveAuthState, clearAuthState, loadAuthState } from "./authStorage";
+import type { Person } from "../types/Person";
 
 export interface User {
   id: string;
   name: string;
   email: string;
+  favorites: Person[];
 }
 
 interface AuthState {
