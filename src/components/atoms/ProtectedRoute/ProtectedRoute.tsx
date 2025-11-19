@@ -13,8 +13,11 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     (state: RootState) => state.auth.isAuthenticated
   );
   const location = useLocation();
+  const loggingOutFromProtected = sessionStorage.getItem(
+    "loggingOutFromProtected"
+  );
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated && !loggingOutFromProtected) {
     return (
       <Navigate
         to={`/?next=${encodeURIComponent(location.pathname)}`}

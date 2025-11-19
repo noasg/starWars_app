@@ -5,14 +5,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../services/authSlice";
 import { peopleApi } from "../../services/peopleApi";
 import { authApi } from "../../services/authApi";
-import {
-  // store,
-  type RootState,
-} from "../../services/store";
+import type { RootState } from "../../services/store";
 import PaginationButton from "../../atoms/PaginationButton/PaginationButton";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import CloseButton from "../../atoms/CloseButton/CloseButton";
-// import { protectedApi } from "../../services/protectedApi";
+import type { Person } from "../../types/Person";
 
 export default function Header() {
   const [showLogin, setShowLogin] = useState(false);
@@ -27,34 +24,63 @@ export default function Header() {
   const userName = useSelector((state: RootState) => state.auth.user?.name);
 
   // Open login modal automatically if location has next query
+
+  const handleLoginSuccess = () => {
+    setShowLogin(false);
+
+    if (nextAfterLogin) {
+      const [action, payload] = nextAfterLogin.split(":");
+
+      if (action === "addFavourite" && payload) {
+        // Add person to session favourites after login
+        const raw = sessionStorage.getItem("sessionFavourites");
+        let parsed: Person[] = [];
+
+        try {
+          parsed = raw ? JSON.parse(raw) : [];
+        } catch {
+          parsed = [];
+        }
+
+        const exists = parsed.some((p) => p.name === payload);
+        if (!exists) {
+          const uniqueId = `sess-${Date.now()}-${Math.random().toString(16).slice(2, 6)}`;
+          parsed.push({ name: payload, id: uniqueId } as Person);
+          sessionStorage.setItem("sessionFavourites", JSON.stringify(parsed));
+          console.log("Added session favourite after login:", payload);
+        }
+      }
+
+      setNextAfterLogin(null);
+    }
+
+    navigate("/", { replace: true });
+  };
+
+  const handleLogout = () => {
+    sessionStorage.setItem("loggingOutFromProtected", "true");
+    setShowLogin(false);
+    sessionStorage.removeItem("sessionFavourites");
+    dispatch(logout());
+    dispatch(peopleApi.util.resetApiState());
+    dispatch(authApi.util.resetApiState());
+    navigate("/", { replace: true });
+    setTimeout(() => {
+      sessionStorage.setItem("loggingOutFromProtected", "false");
+    }, 100);
+  };
+
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const next = params.get("next");
-
+    console.log("Header useEffect - location:", next);
     if (next && !isAuthenticated) {
       Promise.resolve().then(() => {
         setNextAfterLogin(next);
         setShowLogin(true);
       });
     }
-  }, [location.search, isAuthenticated]);
-
-  const handleLoginSuccess = () => {
-    setShowLogin(false);
-    const redirectPath = nextAfterLogin || "/";
-    setNextAfterLogin(null);
-    navigate(redirectPath, { replace: true });
-  };
-
-  const handleLogout = () => {
-    sessionStorage.removeItem("sessionFavourites");
-
-    dispatch(logout());
-    dispatch(peopleApi.util.resetApiState());
-    dispatch(authApi.util.resetApiState());
-
-    navigate("/", { replace: true });
-  };
+  }, [location.search, isAuthenticated, location.pathname]);
 
   const goToFavorites = () => {
     if (!isAuthenticated) {
@@ -64,29 +90,8 @@ export default function Header() {
     navigate("/favourites");
   };
 
-  // const simulateProtectedCall = () => {
-  //   store
-  //     .dispatch(
-  //       protectedApi.endpoints.getSecretData.initiate(undefined, {
-  //         forceRefetch: true,
-  //       })
-  //     )
-  //     .unwrap()
-  //     .then((res) => console.log("Protected data result:", res))
-  //     .catch((err) => console.error("Protected call failed:", err));
-  // };
-
   return (
     <header className="app-header">
-      {/* <PaginationButton
-        onClick={simulateProtectedCall}
-        style={{ marginTop: "0.5rem" }}
-      >
-        Simulate <br />
-        Expired <br />
-        Token
-      </PaginationButton> */}
-
       <h1 className="app-header__title">
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
           Star Wars
