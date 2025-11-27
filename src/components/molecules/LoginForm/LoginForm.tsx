@@ -1,4 +1,3 @@
-// src/molecules/LoginForm/LoginForm.tsx
 import { useState, useRef, type FormEvent } from "react";
 import { useLoginMutation } from "../../services/authApi";
 import { useDispatch } from "react-redux";
@@ -12,29 +11,44 @@ interface LoginFormProps {
 }
 
 export default function LoginForm({ onSuccess }: LoginFormProps) {
+  // ---- Local form state ----
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [touched, setTouched] = useState({ email: false, password: false });
-  const emailRef = useRef<HTMLInputElement>(null);
+  // Tracks what fields were touched for validation highlights
 
+  const emailRef = useRef<HTMLInputElement>(null); // Used to focus email field on errors
+
+  // ---- Redux / Router hooks ----
   const dispatch = useDispatch();
   const navigate = useNavigate(); // ⬅️ ADD THIS
   const [login, { isLoading }] = useLoginMutation();
 
+  /**
+   * -----------------------------------------------------------
+   * Handle form submission
+   * -----------------------------------------------------------
+   */
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
 
-    // Simple validation
+    // Basic front-end validation
+    // Only shows validation messages after fields were touched
     if (!email || !password) {
       setTouched({ email: true, password: true });
       return;
     }
 
     try {
+      /**
+       * Send login API request using RTK Query
+       * .unwrap() converts rejectWithValue into a real error
+       */
       const res = await login({ email, password }).unwrap();
 
+      // Store credentials + user in Redux + sessionStorage
       dispatch(
         loginSuccess({
           user: res.user,
@@ -44,13 +58,17 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
       );
 
       /** -----------------------------------------------
-       * 🔥 NEW LOGIC: Handle the `next` query parameter
-       * Example: ?next=addFavourite:R2-D2
+       * If URL contains **?next=...** we redirect accordingly.
+       * This is used for actions requiring login, e.g.:
+       * /login?next=addFavourite:R2-D2
+       *
+       * After logging in → redirect to /people/R2-D2
        * ----------------------------------------------- */
       const params = new URLSearchParams(window.location.search);
       const next = params.get("next");
 
       if (next) {
+        // Case: request to auto-open a person's modal
         if (next.startsWith("addFavourite:")) {
           const personId = next.replace("addFavourite:", "");
           navigate(`/people/${encodeURIComponent(personId)}`, {
@@ -60,7 +78,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
         }
       }
 
-      // Default after login
+      // Fallback: Parent component override
       if (onSuccess) onSuccess();
       else navigate("/", { replace: true });
     } catch (err: any) {
@@ -69,10 +87,17 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
     }
   };
 
+  /**
+   * -----------------------------------------------------------
+   * Render the login form
+   * -----------------------------------------------------------
+   */
+
   return (
     <form className="login-form" onSubmit={handleSubmit} noValidate>
       <h2>Login</h2>
 
+      {/* Email Field */}
       <div className="form-group">
         <label htmlFor="email">Email</label>
         <input
@@ -92,6 +117,7 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
         )}
       </div>
 
+      {/* Password Field */}
       <div className="form-group">
         <label htmlFor="password">Password</label>
         <input
@@ -110,8 +136,10 @@ export default function LoginForm({ onSuccess }: LoginFormProps) {
         )}
       </div>
 
+      {/* Backend or login errors */}
       {error && <div className="error-banner">{error}</div>}
 
+      {/* Submit Button */}
       <PaginationButton>
         {isLoading ? "Logging in..." : "Login"}
       </PaginationButton>
