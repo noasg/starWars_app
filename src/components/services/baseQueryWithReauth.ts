@@ -49,7 +49,7 @@ export const baseQueryWithReauth: BaseQueryFn<
     if (!refreshToken) {
       console.error("[baseQuery] No refresh token found. Logging out.");
       api.dispatch(logout());
-      window.location.href = `/?next=${encodeURIComponent(window.location.pathname)}`;
+      // window.location.href = `/?next=${encodeURIComponent(window.location.pathname)}`;
       return result;
     }
 
