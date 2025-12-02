@@ -38,6 +38,7 @@ export default function PersonCard({
         }
       }}
       onMouseEnter={() => !disabled && ref.current?.focus()} // only focus if not disabled
+      onMouseLeave={() => !disabled && ref.current?.blur()}
     >
       <img
         src={imageUrl ?? undefined}
